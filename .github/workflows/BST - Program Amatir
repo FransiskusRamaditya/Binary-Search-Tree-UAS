@@ -1,0 +1,366 @@
+//Fransiskus Ramaditya Arief Nursanto
+//1910512002
+//Kelas A
+// Dr. Achmad Solichin, S.Kom., M.T.I.
+
+#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+#include <conio.h>
+using namespace std;
+
+typedef struct Titik {
+	int objek;
+	Titik *likukir;
+	Titik *likukan;
+};
+
+Titik *bst = NULL;
+
+void sisipan (Titik **dasar, int objekmula)
+{ if ((*dasar) ==  NULL) {
+	Titik *mula;
+	mula = new Titik;
+	mula -> objek = objekmula;
+	mula -> likukir = NULL;
+	mula -> likukan = NULL;
+	(*dasar) = mula;
+	(*dasar) -> likukir = NULL;
+	(*dasar) -> likukan = NULL;
+	printf(“Objek Berhasil Disisipkan”);
+} 
+	else if (objekmula<(*dasar)->objek)
+	sisipan(&(*dasar)->likukir, objekmula);
+	else if (objekmula>(*dasar)->objek)
+	sisipan(&(*dasar) -> likukan, objekmula);	
+	else if (objekmula == (*dasar)->objek)
+	printf(“Objek Telah Tersedia Ya~”);
+}
+
+void transPreOrd(Titik *dasar)
+{ if(dasar!= NULL) {
+	if(dasar -> objek!= NULL)
+	{printf(“%d”, dasar -> objek);
+	transPreOrd(dasar -> likukir);
+	transPreOrd(dasar -> likukan); 
+		}
+	}
+}
+
+void transInOrd(Titik *dasar)
+{ if(dasar!= NULL) {
+	if(dasar -> objek!= NULL)
+	{transInOrd(dasar -> likukir);
+	printf(“%d”, dasar -> objek);
+	transInOrd(dasar -> likukan); 
+		}
+	}
+}
+
+void transPostOrd(Titik *dasar)
+{ if(dasar!= NULL) {
+	transPostOrd(dasar -> likukir);
+	transPostOrd(dasar -> likukan);
+	if(dasar -> objek!= NULL)
+	{ printf(“%d”, dasar -> objek);
+			}
+	}
+}
+
+void penelusuran(Titik **dasar, int telusur)
+{ if ((*dasar) == NULL) {
+	printf(“Objek Tidak Sesuai, Tidak Tersedia”); 
+}	
+	else if(telusur < (*dasar) -> objek)
+	penelusuran(&(*dasar) -> likukir, telusur);
+	else if(telusur > (*dasar) -> objek)
+	penelusuran(&(*dasar) -> likukan, telusur);
+	else if(telusur == (*dasar) -> objek)
+	printf(“Selamat Objek Tersedia dan Sesuai”);
+}
+
+int jangka(Titik *dasar)
+{ if((dasar) == NULL)
+return -1;
+	else {
+		int x = jangka(dasar -> likukir);
+		int y = jangka(dasar -> likukan);
+		if(x > y)
+		return x + 1;
+		else
+		return y + 1; }
+}
+
+void hapus(Titik **dasar, int haps)
+{ 
+	Titik *sek;
+	Titik *ort;
+	Titik *plat;
+	sek = (*dasar);
+	bool flag = false;
+while(sek != NULL) {
+	if (sek -> objek == haps) {
+		flag = true;
+		//cout << “Selamat Objek Telah Dioperasikan”;
+		break;
+} else {
+	ort = sek;
+	if(haps > sek -> objek)
+	sek = sek -> likukan;
+	else
+	sek = sek -> likukir; }
+}
+
+if(!flag) {
+cout << “ Objek Tidak Ditemukan. Penghapusan Tidak Dilakukan.” <<endl;
+return;
+}
+
+if(jangka(bst) == 0) {
+	if( sek -> likukir == NULL && sek -> likukan == NULL) {
+	(*dasar) = NULL;
+	return;
+	}
+} 
+
+else if(jangka (bst) > 0) {
+	if( sek -> likukir == NULL && sek -> likukan == NULL) {
+		if(ort -> likukir == sek) {
+			ort -> likukir = NULL;
+			delete sek;
+} else {
+	ort -> likukan = NULL;
+	delete sek;
+	} return;
+}
+
+if((sek -> likukir == NULL && sek -> likukan!= NULL) || 
+(sek -> likukir!= NULL && sek -> likukan == NULL)) {
+	if(sek -> likukir == NULL && sek -> likukan!= NULL) {
+		if(ort -> likukir == sek) {
+			ort -> likukir = sek -> likukan;
+			delete sek;
+			sek = NULL; }
+
+else if(ort -> likukan == sek) {
+	ort -> likukan = sek -> likukan;
+	delete sek;
+	sek = NULL; 
+} else {
+	plat = *dasar;
+	(*dasar) = (*dasar) -> likukan;
+	delete plat;
+	plat = NULL; }
+} else {
+	if(ort -> likukir == sek) {
+	ort -> likukir = sek -> likukir;
+	delete sek;
+	sek = NULL; 
+}
+
+else if (ort -> likukan == sek) {
+	ort -> likukan = sek -> likukir;
+	delete sek;
+	sek = NULL;
+} else {
+	plat = *dasar;
+	(*dasar) = (*dasar) -> likukir;
+	delete plat;
+	plat = NULL;
+			}
+	} return;
+}
+
+if(sek -> likukir!= NULL && sek -> likukan!= NULL) {
+	Titik* assist;
+	assist = sek -> likukan;
+if((assist -> likukir == NULL) && (assist -> likukan == NULL)) {
+	sek = assist;
+	delete assist;
+	sek -> likukan = NULL;
+
+} else {
+	if(sek -> likukan -> likukir!= NULL) {
+		Titik* assist1;
+		Titik* assist2;
+		assist2 = sek -> likukan;
+		assist2 = sek -> likukan -> likukir;
+		while(assist1 -> likukir!= NULL) {
+	assist2 = assist1;
+	assist1 = assist1 -> likukir; }
+	sek -> objek = assist1 -> objek;
+	delete assist1;
+	assist2 -> likukir = NULL;
+
+} else {
+	Titik* plt;
+	plt = sek -> likukan;
+	sek -> objek = plt -> objek;
+	sek -> likukan = plt -> likukan;
+	delete plt;
+	plt = NULL; }
+} return; 
+			}
+	}
+}
+int telusurKecil() {
+	Titik* sek = bst;
+	while(sek -> likukir!= NULL) {
+	sek = sek -> likukir;
+	} return sek -> objek;
+}
+int telusurBesar() {
+	Titik* sek = bst;
+	while (sek -> likukan!= NULL) {
+	sek = sek -> likukan; 
+	} return sek -> objek;
+} 
+
+int main () {
+	char opsi;
+	int haps, telusur;
+	while (true) {
+
+	system(“cls”);
+	int objek;
+	printf(“\nBST Operasi Sederhana – Program Amatir”);
+	printf(“”);
+	printf(“\nOPSI”);
+	printf(“”);
+
+	printf(“\n 1) Menambahkan Objek”);
+	printf(“\n 2) Tampilkan Secara Pre Order”);
+	printf(“\n 3) Tampilkan Secara In Order\n”);
+	printf(“ 4) Tampilkan Secara Post Order\n”);
+	printf(“ 5) Menghapus Objek\n”);
+	printf(“ 6) Mereset Target\n”);
+	printf(“ 7) Mencari Objek\n”);
+	printf(“ 8) Mencari Objek Terkecil\n”);
+	printf(“ 9) Mencari Objek Terbesar\n”);
+	printf(" 10) Mengakhiri Program\n”);
+
+	printf(“ Apa yang Ingin Kamu lakukan? :”);
+	scanf(“%c”, &opsi);
+	
+switch(opsi) { 
+
+case ‘1’ :
+printf(“\nSISIPKAN : ”);
+printf(“”);
+printf(“\nSilahkan Ketik Inputan :”);
+scanf(“%d”, &objek);
+sisipan(&bst, objek);
+getch();
+break;
+
+case ‘2’ :
+printf(“\nTampilan Pre Order : ”);
+printf(“”);
+if(bst!= NULL)
+transPreOrd(bst);
+
+else
+printf(“Tidak Ada Isinya Ya~”);
+getch();
+break;
+
+case ‘3’ :
+printf(“\nTampilan In Order : ”);
+printf(“”);
+if(bst!= NULL)
+transInOrd(bst);
+
+else
+printf(“Tidak Ada Isinya Ya~”);
+getch();
+break;
+	
+case ‘4’ :
+printf(“\nTampilan Post Order : ”);
+printf(“”);
+if(bst!= NULL)
+transPostOrd(bst);
+
+else
+printf(“Tidak Ada Isinya Ya~”);
+getch();
+break;
+
+case ‘5’ :
+if(bst!= NULL) {
+printf(“\n Setiap Tampilan Titik Sebelumnya : ”);
+printf(“”);
+
+printf(“\n Secara Pre Order : ”);
+transPreOrd(bst);
+printf(“\n Secara In Order : ”);
+transInOrd(bst);
+printf(“\n Secara Post Order : ”);
+transPostOrd(bst);
+
+printf(“\nSilahkan Ketik Titik yang Ingin Dihilangkan : ”);
+scanf(“%d”, &haps);
+hapus(&bst, haps);
+
+printf(“\n Setiap Tampilan Titik Setelahnya : ”);
+printf(“”);
+
+printf(“\n Secara Pre Order : ”);
+transPreOrd(bst);
+printf(“\n Secara In Order : ”);
+transInOrd(bst);
+printf(“\n Secara Post Order : ”);
+transPostOrd(bst); }
+
+else
+printf(“\n Tidak Ada Isinya Ya~”);
+getch();
+break;
+
+case’6’ :
+bst = NULL;
+printf(“\n Reset Tampilan ”);
+printf(“”);
+printf(“\n Tampilan Sudah Kosong, Silahkan Isi Kembali ”);
+getch();
+break;
+
+case’7’ :
+printf(“\n Check Ketersediaan Isi Titik yang Dimaksud”);
+printf(“”);
+if(bst!= NULL) {
+printf(“\n Secara Pre Order : ”);
+transPreOrd(bst);
+printf(“\n Secara In Order : ”);
+transInOrd(bst);
+printf(“\n Secara Post Order : ”);
+transPostOrd(bst);
+printf(“\n Telusuri Isi”);
+printf(“”);
+printf(“\n  Silahkan Ketik Titik yang Ingin Ditelusuri : ”);
+scanf(“%d”, &telusur);
+penelusuran(&bst, telusur); }
+else
+printf(“\n Tidak Ada Isinya Ya~”);
+getch();
+break;
+
+case’8’ :
+printf(”\n Inilah Titik Paling Kecil :”);
+telusurKecil();
+getch();
+break;
+
+case’9’ :
+printf(“\n Inilah Titik Paling Besar :”);
+telusurBesar();
+getch();
+break;
+
+case’10’ :
+exit(0);
+break;
+			}
+	}
+}
+
